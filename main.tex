@@ -1,0 +1,185 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Demo paper for the single-column arXiv template.
+% Replace the metadata below with your own; delete the demo sections.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\PassOptionsToPackage{table}{xcolor}
+\PassOptionsToPackage{hypertexnames=false}{hyperref}
+
+\usepackage{naiss-hku-template} % add [letterpaper] for US Letter (ICLR-like)
+                                % add [branded] for the lab-branded look
+
+% ---- extra packages used by this demo (load what your paper needs) ----
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{placeins}
+\usetikzlibrary{arrows.meta, positioning}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny,
+  xleftmargin=2em,
+}
+
+% ---- paper metadata ----
+\setNAISSTitle{SingleCol: A Clean Single-Column Template for arXiv Preprints}
+\setNAISSAuthors{%
+  First Author\textsuperscript{1\ensuremath{\dagger}}\quad
+  Second Author\textsuperscript{1}\quad
+  Third Author\textsuperscript{1}\quad
+  Corresponding Author\textsuperscript{1*}}
+\setNAISSAffiliation{%
+  \textsuperscript{1}Your Lab, Your University\\[-0.1em]
+  \textsuperscript{\ensuremath{\dagger}}Equal contributions\qquad
+  \textsuperscript{*}Corresponding author}
+\setNAISSEmail{%
+  \href{mailto:author@example.edu}{author@example.edu}}
+\setNAISSAbstract{%
+This template provides a single-column, ICLR-flavored paper style for arXiv
+preprints: Times-like fonts, a rounded mint title box with the abstract, and
+green-and-gold accent rules. The title, authors, affiliation, abstract, and
+links are set with the \texttt{\textbackslash setNAISS*} commands shown in
+\texttt{main.tex}. This demo text shows the main features: section headings,
+branded lists, theorem environments, highlight boxes, figures, tables,
+algorithms, and code listings. Delete the demo body and write your paper.}
+\setNAISSLinks{%
+  \href{https://github.com/your/repo}{\faGithub\ Code}\quad
+  \href{https://your-project-page.example.com}{\faGlobe\ Project page}\quad
+  \href{https://huggingface.co/your/repo}{\faRobot\ Models}}
+
+\begin{document}
+\NAISSMakeTitle
+\NAISSMakeAbstract
+
+\section{Introduction}
+\label{sec:intro}
+
+This is a demo paragraph. Citations render in the accent green, e.g.,
+Transformers~\citep{vaswani2017attention} and agent benchmarks such as
+AgentDojo~\citep{debenedetti2024agentdojo}; prompt-injection threats are
+discussed by \citet{greshake2023promptinjection}. Itemized lists carry green
+bullets and gold dashes at the second level:
+
+\begin{itemize}
+  \item \textbf{Accent palette:} \textcolor{NAISSGreen}{deep green} for
+    links, citations, and emphasis; \textcolor{NAISSInk}{navy ink} headings;
+    a \textcolor{NAISSGold!85!black}{warm gold} highlight.
+  \item A second-level item:
+    \begin{itemize}
+      \item rendered with a gold rule bullet;
+      \item tighten or widen spacing with \texttt{enumitem} as usual.
+    \end{itemize}
+\end{itemize}
+
+\begin{naissgoldbox}[Takeaway]
+The default look is fully self-contained: no figure files are required, and
+the document compiles on a stock TeX~Live with \texttt{pdflatex} only.
+\end{naissgoldbox}
+
+\section{Method}
+\label{sec:method}
+
+Equations use \texttt{newtxmath} (Times-like), matching the ICLR
+single-column look:
+\begin{equation}
+  \mathcal{L}(\theta) = \mathbb{E}_{(x,y)\sim\mathcal{D}}
+  \left[\, -\log p_\theta(y \mid x) \,\right] + \lambda \lVert\theta\rVert_2^2 .
+\end{equation}
+
+\begin{definition}[Defense skill]
+A \emph{defense skill} is an executable, auditable unit that maps an
+intermediate agent observation to an allow / quarantine decision.
+\end{definition}
+
+\begin{theorem}[Soundness, demo]
+\label{thm:demo}
+If every skill in the library is sound, then the composed gatekeeper is sound.
+\end{theorem}
+\begin{proof}[Sketch]
+Induction over the composition chain; each step preserves the invariant.
+\end{proof}
+
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[
+      font=\small,
+      node distance=1.7cm,
+      box/.style={draw=NAISSGreen, fill=NAISSTint, rounded corners=3pt,
+                  minimum height=0.85cm, inner sep=6pt},
+      gold/.style={draw=NAISSGold!85!black, fill=NAISSGold!14, rounded corners=3pt,
+                   minimum height=0.85cm, inner sep=6pt},
+      arr/.style={-{Stealth[length=2.4mm]}, thick, NAISSMuted}]
+    \node[box] (ingest) {Ingest};
+    \node[box, right=of ingest] (tier0) {Tier-0 rules};
+    \node[gold, right=of tier0] (tier1) {Tier-1 LLM};
+    \node[box, right=of tier1] (act) {Act / quarantine};
+    \draw[arr] (ingest) -- (tier0);
+    \draw[arr] (tier0) -- node[above, font=\scriptsize\itshape]{uncertain} (tier1);
+    \draw[arr] (tier1) -- (act);
+  \end{tikzpicture}
+  \caption{Demo figure drawn in TikZ with the template palette (no external
+  file needed). External figures work as usual with \texttt{\textbackslash
+  includegraphics}.}
+  \label{fig:pipeline}
+\end{figure}
+
+\section{Evaluation}
+\label{sec:eval}
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Defense} & \textbf{ASR} $\downarrow$ & \textbf{FPR} $\downarrow$
+      & \textbf{ms / request} $\downarrow$ \\
+    \midrule
+    Baseline A & 18.4 & 2.1 & 3.2 \\
+    Baseline B & 12.9 & 1.8 & 410.0 \\
+    \midrule
+    \textbf{Ours} & \textbf{4.7} & \textbf{1.2} & \textbf{26.5} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Demo table with \texttt{booktabs}; numbers are placeholders.}
+  \label{tab:demo}
+\end{table}
+
+\begin{algorithm}[t]
+  \caption{Demo gatekeeper loop}
+  \label{alg:demo}
+  \begin{algorithmic}[1]
+    \Require observation stream $o_1, o_2, \dots$
+    \Ensure decision $d_t \in \{\text{allow}, \text{quarantine}\}$
+    \ForAll{observations $o_t$ in the stream}
+      \If{\textsc{Tier0Match}$(o_t)$}
+        \State $d_t \gets \text{quarantine}$
+      \Else
+        \State $d_t \gets \textsc{Tier1Infer}(o_t)$
+      \EndIf
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{naissbox}[Reproducibility]
+Code, data, and configs are released at the link in the header box.
+Hyperlinks, citations, and references all use the accent green.
+\end{naissbox}
+
+\FloatBarrier
+\section{Conclusion}
+\label{sec:conclusion}
+
+Replace this demo body with your paper; keep the \texttt{\textbackslash
+setNAISS*} metadata block. See \texttt{README.md} for the page-size and
+branding options, logo replacement, and arXiv upload notes.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

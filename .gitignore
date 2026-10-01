@@ -1,0 +1,18 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Compiled output
+main.pdf
+
+# Brand assets (local only; add deliberately if you want them tracked)
+figures/hku-logo.png
+figures/hku-logo.pdf
+figures/naiss-logo.pdf

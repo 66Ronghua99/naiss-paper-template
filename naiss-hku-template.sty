@@ -1,0 +1,264 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% naiss-hku-template.sty
+% Single-column arXiv paper template for NAISS Lab (Networked AI Systems and
+% Security), The University of Hong Kong.
+%
+% Layout and title-block design follow the style of arXiv:2608.27990
+% (astaple-polyu-template), re-branded with the NAISS / HKU palette taken
+% from https://naisslab.github.io.
+%
+% Usage:
+%   \usepackage{naiss-hku-template}              % clean base template, A4
+%   \usepackage[letterpaper]{naiss-hku-template} % US Letter (ICLR-like)
+%   \usepackage[branded]{naiss-hku-template}     % + lab lockup & HKU wordmark
+%
+% Provided commands:
+%   \setNAISSTitle{...} \setNAISSAuthors{...} \setNAISSAffiliation{...}
+%   \setNAISSEmail{...} \setNAISSAbstract{...} \setNAISSLinks{...}
+%   \NAISSMakeTitle  \NAISSMakeAbstract
+% Provided colors: NAISSGreen, NAISSSoft, NAISSTint, NAISSGold, NAISSInk,
+%                  NAISSMuted
+% Provided boxes:  naissbox, naissgoldbox   (tcolorbox, optional title)
+% Provided theorems (amsthm, numbered by section):
+%                  theorem, lemma, proposition, corollary, definition,
+%                  assumption, example, remark
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{naiss-hku-template}[2026/09/26 NAISS Lab (HKU) arXiv paper template]
+
+% ---------- options ----------
+% Default output is a clean, unbranded base template. Pass [branded] to
+% restore the lab lockup (figures/naiss-logo.pdf, else a built-in TikZ
+% wordmark) and the HKU wordmark in the page head and title box.
+\newif\ifnaiss@branded
+\DeclareOption{branded}{\naiss@brandedtrue}
+\newif\ifnaiss@letterpaper
+\DeclareOption{letterpaper}{\naiss@letterpapertrue}
+\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{geometry}}
+\ProcessOptions\relax
+
+\ifnaiss@letterpaper
+  \RequirePackage[letterpaper,margin=1in,top=0.72in,bottom=0.9in]{geometry}
+\else
+  \RequirePackage[a4paper,margin=1in,top=0.72in,bottom=0.9in]{geometry}
+\fi
+
+% ---------- base packages ----------
+\RequirePackage[T1]{fontenc}
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{natbib}
+\RequirePackage{titlesec}
+\RequirePackage{enumitem}
+\RequirePackage{caption}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{tikz}
+\RequirePackage{microtype}
+\RequirePackage{newtxtext,newtxmath}
+\RequirePackage{fontawesome5}
+\RequirePackage{hyperref}
+
+% ---------- NAISS brand palette (from naisslab.github.io) ----------
+\definecolor{NAISSGreen}{HTML}{024638}  % lab accent deep green (HKU green family)
+\definecolor{NAISSSoft}{HTML}{D7EBE5}   % soft mint (tags / frames)
+\definecolor{NAISSTint}{HTML}{F1F7F4}   % very light mint (box background)
+\definecolor{NAISSGold}{HTML}{F0CF59}   % warm gold accent
+\definecolor{NAISSInk}{HTML}{13263B}    % dark navy ink (headings)
+\definecolor{NAISSMuted}{HTML}{3E5366}  % secondary text
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=NAISSGreen,
+  citecolor=NAISSGreen,
+  urlcolor=NAISSGreen
+}
+\pdfstringdefDisableCommands{%
+  \def\textsuperscript#1{}%
+  \def\ensuremath#1{#1}%
+  \def\thanks#1{}%
+  \def\footnote#1{}%
+  \def\\{}%
+  \def\quad{ }%
+  \def\qquad{ }%
+}
+
+% ---------- typography ----------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+\titleformat{\section}
+  {\large\bfseries\color{NAISSInk}}{\thesection}{0.6em}{}
+\titleformat{\subsection}
+  {\normalsize\bfseries\color{NAISSInk}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{NAISSMuted}}{\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.2em}{0.5em}
+\titlespacing*{\subsection}{0pt}{0.9em}{0.35em}
+\titlespacing*{\subsubsection}{0pt}{0.7em}{0.25em}
+
+\setlist{itemsep=0.22em, topsep=0.35em, parsep=0pt, leftmargin=1.6em}
+\setlist[itemize,1]{label=\textcolor{NAISSGreen}{\textbullet}}
+\setlist[itemize,2]{label=\textcolor{NAISSGold}{\rule[0.45ex]{0.55em}{0.14ex}}}
+
+\captionsetup{font={small}, labelfont={bf,color=NAISSGreen}, skip=0.5em}
+
+% ---------- theorem environments ----------
+\newtheoremstyle{naissplain}{0.6em}{0.6em}{\itshape}{}{\bfseries\color{NAISSGreen}}{.}{0.5em}{}
+\newtheoremstyle{naissdef}{0.6em}{0.6em}{}{}{\bfseries\color{NAISSGreen}}{.}{0.5em}{}
+\theoremstyle{naissplain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{naissdef}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% ---------- highlight boxes ----------
+\newtcolorbox{naissbox}[1][]{%
+  enhanced, colback=NAISSTint, colframe=NAISSSoft, boxrule=0.6pt,
+  arc=2.5pt, left=0.12in, right=0.12in, top=0.1in, bottom=0.1in,
+  borderline west={2pt}{0pt}{NAISSGreen},
+  fonttitle=\bfseries\color{NAISSGreen}, title={#1}}
+\newtcolorbox{naissgoldbox}[1][]{%
+  enhanced, colback=NAISSGold!14, colframe=NAISSGold!65!black, boxrule=0.6pt,
+  colbacktitle=NAISSGold!35, coltitle=NAISSInk,
+  arc=2.5pt, left=0.12in, right=0.12in, top=0.1in, bottom=0.1in,
+  borderline west={2pt}{0pt}{NAISSGold!80!black},
+  fonttitle=\bfseries, title={#1}}
+
+% ---------- NAISS logo ----------
+% Slot for the official lab logo: drop a vector PDF at figures/naiss-logo.pdf
+% and it is used automatically. Otherwise a built-in TikZ wordmark (network
+% glyph + "NAISS Lab") is rendered, so the template always compiles --
+% including on arXiv when figure files were not uploaded.
+\newcommand{\naiss@lockupglyph}{%
+  \begin{scope}[line cap=round]
+    \coordinate (na) at (0.02,0.10);
+    \coordinate (nb) at (0.30,0.44);
+    \coordinate (nc) at (0.34,0.02);
+    \coordinate (nd) at (0.62,0.30);
+    \coordinate (ne) at (0.68,0.00);
+    \draw[NAISSGreen, line width=0.9pt]
+      (na)--(nb) (na)--(nc) (nb)--(nc) (nb)--(nd) (nc)--(nd) (nc)--(ne) (nd)--(ne);
+    \fill[NAISSGreen]        (na) circle (0.070);
+    \fill[NAISSGreen!75]     (nb) circle (0.070);
+    \fill[NAISSGreen]        (nc) circle (0.070);
+    \fill[NAISSGreen!65]     (ne) circle (0.055);
+    \fill[NAISSGold]         (nd) circle (0.088);
+  \end{scope}}
+
+% #1 = target height; glyph only (near-square mark, used as the box overlay)
+\newcommand{\naissglyph}[1]{%
+  \resizebox{!}{#1}{%
+    \begin{tikzpicture}[x=1cm,y=1cm]
+      \naiss@lockupglyph
+    \end{tikzpicture}}}
+
+% #1 = target height; glyph + two-line wordmark (header lockup)
+\newcommand{\naisslockup}[1]{%
+  \resizebox{!}{#1}{%
+    \begin{tikzpicture}[x=1cm,y=1cm]
+      \naiss@lockupglyph
+      \node[anchor=west, align=left, inner sep=0pt] at (0.84,0.23)
+        {{\color{NAISSInk}\bfseries\fontsize{21}{21}\selectfont NAISS}%
+         {\color{NAISSInk}\bfseries\fontsize{21}{21}\selectfont\ }%
+         {\color{NAISSGreen}\bfseries\fontsize{21}{21}\selectfont Lab}\\[2pt]
+         {\color{NAISSMuted}\fontsize{6.2}{6.2}\selectfont\scshape
+          Networked AI Systems and Security}};
+    \end{tikzpicture}}}
+
+% #1 = target height; uses figures/naiss-logo.pdf if present, else TikZ lockup
+\newcommand{\NAISSLogoMark}[1]{%
+  \IfFileExists{figures/naiss-logo.pdf}%
+    {\includegraphics[height=#1]{figures/naiss-logo.pdf}}%
+    {\naisslockup{#1}}%
+}
+
+% ---------- title / author metadata ----------
+\newcommand{\NAISSTitle}{Paper Title Goes Here}
+\newcommand{\NAISSAuthors}{Author One\textsuperscript{1},
+  Author Two\textsuperscript{1}, Author Three\textsuperscript{1}}
+\newcommand{\NAISSAffiliation}{\textsuperscript{1}Your Affiliation}
+\newcommand{\NAISSEmail}{author@example.edu}
+\newcommand{\NAISSAbstract}{Write a concise abstract here: the problem, your
+  method, and the key findings. Replace this placeholder before posting to arXiv.}
+\newcommand{\NAISSLinks}{}
+
+\newcommand{\setNAISSTitle}[1]{\renewcommand{\NAISSTitle}{#1}}
+\newcommand{\setNAISSAuthors}[1]{\renewcommand{\NAISSAuthors}{#1}}
+\newcommand{\setNAISSAffiliation}[1]{\renewcommand{\NAISSAffiliation}{#1}}
+\newcommand{\setNAISSEmail}[1]{\renewcommand{\NAISSEmail}{#1}}
+\newcommand{\setNAISSAbstract}[1]{\renewcommand{\NAISSAbstract}{#1}}
+\newcommand{\setNAISSLinks}[1]{\renewcommand{\NAISSLinks}{#1}}
+
+% ---------- header + title block ----------
+\newcommand{\NAISSMakeTitle}{%
+  \ifnaiss@branded
+  \noindent
+  \makebox[\textwidth]{%
+    \begin{minipage}[c][1.45cm][c]{0.46\textwidth}
+      \raggedright
+      \NAISSLogoMark{1.02cm}%
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[c][1.45cm][c]{0.46\textwidth}
+      \raggedleft
+      \IfFileExists{figures/hku-logo.pdf}%
+        {\includegraphics[height=1.0cm]{figures/hku-logo.pdf}}%
+        {\IfFileExists{figures/hku-logo.png}%
+          {\includegraphics[height=1.0cm]{figures/hku-logo.png}}%
+          {\color{NAISSInk}\bfseries\small THE UNIVERSITY OF HONG KONG}}%
+    \end{minipage}}%
+  \par\vspace{-0.75em}
+  \fi
+  \noindent{\color{NAISSGreen}\rule{\textwidth}{1.1pt}}\par\vspace{2.5pt}
+  \noindent{\color{NAISSGold}\rule{\textwidth}{0.7pt}}\par\vspace{1.05em}
+}
+
+\ifnaiss@branded
+\newtcolorbox{naisstitlebox}{%
+  enhanced, colback=NAISSTint, colframe=NAISSTint, boxrule=0pt,
+  arc=7pt, left=0.16in, right=0.16in, top=0.12in, bottom=0.28in,
+  width=\textwidth,
+  overlay={%
+    \node[anchor=north east, xshift=-0.2in, yshift=-0.3in]
+      at (frame.north east)
+      {\IfFileExists{figures/naiss-logo.pdf}%
+        {\includegraphics[height=1.45cm]{figures/naiss-logo.pdf}}%
+        {\naissglyph{0.95cm}}};}}
+\else
+\newtcolorbox{naisstitlebox}{%
+  enhanced, colback=NAISSTint, colframe=NAISSTint, boxrule=0pt,
+  arc=7pt, left=0.16in, right=0.16in, top=0.12in, bottom=0.28in,
+  width=\textwidth}
+\fi
+
+\newcommand{\NAISSMakeAbstract}{%
+  \hypersetup{pdftitle={\NAISSTitle}, pdfauthor={\NAISSAuthors}}%
+  \begin{naisstitlebox}
+    {\LARGE\bfseries\color{NAISSInk}\NAISSTitle\par}
+    \vspace{0.8em}
+
+    {\normalsize\bfseries\color{NAISSGreen}\NAISSAuthors\par}
+    \vspace{0.3em}
+    {\small\color{NAISSGreen}\NAISSAffiliation\par}
+    {\small\color{NAISSMuted}\NAISSEmail\par}
+    \vspace{0.75em}
+
+    {\normalsize\linespread{1.06}\selectfont \NAISSAbstract\par}
+    \ifx\NAISSLinks\@empty\else
+      \vspace{0.45em}
+      {\small\bfseries\color{NAISSGreen}\NAISSLinks\par}
+    \fi
+  \end{naisstitlebox}%
+  \vspace{0.4em}
+}
+
+\endinput
